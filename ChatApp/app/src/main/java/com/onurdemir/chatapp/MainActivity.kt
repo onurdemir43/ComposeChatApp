@@ -10,7 +10,32 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.onurdemir.chatapp.ui.ChatListScreen
+import com.onurdemir.chatapp.ui.LoginScreen
+import com.onurdemir.chatapp.ui.ProfileScreen
+import com.onurdemir.chatapp.ui.SignupScreen
+import com.onurdemir.chatapp.ui.SingleChatScreen
+import com.onurdemir.chatapp.ui.SingleStatusScreen
+import com.onurdemir.chatapp.ui.StatusListScreen
 import com.onurdemir.chatapp.ui.theme.ChatAppTheme
+
+sealed class DestinationScreen(val route: String) {
+    object Signup: DestinationScreen("signup")
+    object Login: DestinationScreen("login")
+    object Profile: DestinationScreen("profile")
+    object ChatList: DestinationScreen("chatList")
+    object SingleChat: DestinationScreen("singleChat/{chatId}") {
+        fun creatRoute(id: String) = "singleChat/$id"
+    }
+    object StatusList: DestinationScreen("statusList")
+    object SingleStatus: DestinationScreen("singleStatus/{statusId}") {
+        fun createRoute(id: String) = "singleStatus/$id"
+    }
+}
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    ChatAppNavigation()
                 }
             }
         }
@@ -30,17 +55,31 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun ChatAppNavigation() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = DestinationScreen.Profile.route) {
+        composable(DestinationScreen.Signup.route) {
+            SignupScreen()
+        }
+        composable(DestinationScreen.Login.route) {
+            LoginScreen()
+        }
+        composable(DestinationScreen.Profile.route) {
+            ProfileScreen(navController)
+        }
+        composable(DestinationScreen.StatusList.route) {
+            StatusListScreen(navController)
+        }
+        composable(DestinationScreen.SingleStatus.route) {
+            SingleStatusScreen(statusId = "123")
+        }
+        composable(DestinationScreen.ChatList.route) {
+            ChatListScreen(navController)
+        }
+        composable(DestinationScreen.SingleChat.route) {
+            SingleChatScreen(chatId = "123")
+        }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ChatAppTheme {
-        Greeting("Android")
     }
+
 }
