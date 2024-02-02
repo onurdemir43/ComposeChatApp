@@ -21,6 +21,7 @@ import com.onurdemir.chatapp.ui.SingleChatScreen
 import com.onurdemir.chatapp.ui.SingleStatusScreen
 import com.onurdemir.chatapp.ui.StatusListScreen
 import com.onurdemir.chatapp.ui.theme.ChatAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 sealed class DestinationScreen(val route: String) {
     object Signup: DestinationScreen("signup")
@@ -36,7 +37,7 @@ sealed class DestinationScreen(val route: String) {
     }
 }
 
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
