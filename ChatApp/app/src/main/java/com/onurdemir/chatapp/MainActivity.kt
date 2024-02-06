@@ -60,6 +60,8 @@ class MainActivity : ComponentActivity() {
 fun ChatAppNavigation() {
     val vm = hiltViewModel<CAViewModel>()
 
+    NotificationMessage(vm = vm)
+
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = DestinationScreen.Signup.route) {
         composable(DestinationScreen.Signup.route) {
