@@ -90,7 +90,12 @@ fun SignupScreen(navController: NavController, vm: CAViewModel) {
 
             Button(onClick = {
                 focus.clearFocus(force = true)
-                // Call ViewModel
+                vm.onSignup(
+                    nameState.value.text,
+                    numberState.value.text,
+                    emailState.value.text,
+                    passwordState.value.text
+                )
             }, modifier = Modifier.padding(8.dp)) {
                 Text(text = "SIGN UP")
             }
