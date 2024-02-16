@@ -1,6 +1,7 @@
 package com.onurdemir.chatapp
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,7 @@ import com.onurdemir.chatapp.data.Event
 import com.onurdemir.chatapp.data.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.lang.Exception
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -156,5 +158,29 @@ class CAViewModel @Inject constructor(
         val message = if (customMessage.isEmpty()) errorMsg else "$customMessage: $errorMsg"
         popUpNotification.value = Event(message)
         inProgress.value = false
+    }
+
+    private fun uploadImage(uri: Uri, onSucces: (Uri) -> Unit) {
+        inProgress.value = true
+
+        val storageRef = storage.reference
+        val uuid = UUID.randomUUID()
+        val imageRef = storageRef.child("image/$uuid")
+        val uploadTask = imageRef.putFile(uri)
+
+        uploadTask.addOnSuccessListener {
+            val result = it.metadata?.reference?.downloadUrl
+            result?.addOnSuccessListener(onSucces)
+            inProgress.value = false
+        }
+            .addOnFailureListener {
+                handleException(it)
+            }
+    }
+
+    fun uploadProfileImage(uri: Uri) {
+        uploadImage(uri) {
+            createOrUpdateProfile(imageUrl = it.toString())
+        }
     }
 }
