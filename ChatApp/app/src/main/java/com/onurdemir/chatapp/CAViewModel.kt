@@ -11,6 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
 import com.onurdemir.chatapp.data.COLLECTION_USER
+import com.onurdemir.chatapp.data.ChatData
 import com.onurdemir.chatapp.data.Event
 import com.onurdemir.chatapp.data.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +29,9 @@ class CAViewModel @Inject constructor(
     val popUpNotification = mutableStateOf<Event<String>?>(null)
     val signedIn = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
+
+    val chats = mutableStateOf<List<ChatData>>(listOf())
+    val inProgressChats = mutableStateOf(false)
 
     init {
         //onLogout()
