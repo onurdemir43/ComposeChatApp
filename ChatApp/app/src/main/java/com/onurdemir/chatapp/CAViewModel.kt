@@ -16,11 +16,13 @@ import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
 import com.onurdemir.chatapp.data.COLLECTION_CHAT
 import com.onurdemir.chatapp.data.COLLECTION_MESSAGES
+import com.onurdemir.chatapp.data.COLLECTION_STATUS
 import com.onurdemir.chatapp.data.COLLECTION_USER
 import com.onurdemir.chatapp.data.ChatData
 import com.onurdemir.chatapp.data.ChatUser
 import com.onurdemir.chatapp.data.Event
 import com.onurdemir.chatapp.data.Message
+import com.onurdemir.chatapp.data.Status
 import com.onurdemir.chatapp.data.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.lang.Exception
@@ -46,6 +48,9 @@ class CAViewModel @Inject constructor(
     val inProgressChatMessages = mutableStateOf(false)
 
     var currentChatMessagesListener: ListenerRegistration? = null
+
+    val status = mutableStateOf<List<Status>>(listOf())
+    val inProgressStatus = mutableStateOf(false)
 
     init {
         //onLogout()
@@ -307,5 +312,25 @@ class CAViewModel @Inject constructor(
     fun depopulateChat() {
         chatMessages.value = listOf()
         currentChatMessagesListener = null
+    }
+
+    private fun createStatus(imageUrl: String) {
+        val newStatus = Status(
+            ChatUser(
+                userData.value?.userId,
+                userData.value?.name,
+                userData.value?.imageUrl,
+                userData.value?.number
+            ),
+            imageUrl,
+            System.currentTimeMillis()
+        )
+        db.collection(COLLECTION_STATUS).document().set(newStatus)
+    }
+
+    fun uploadStatus(imageUri: Uri) {
+        uploadImage(imageUri) {
+            createStatus(imageUrl = it.toString())
+        }
     }
 }
