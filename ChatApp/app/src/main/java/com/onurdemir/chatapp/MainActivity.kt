@@ -72,7 +72,7 @@ fun ChatAppNavigation() {
             ProfileScreen(navController, vm)
         }
         composable(DestinationScreen.StatusList.route) {
-            StatusListScreen(navController)
+            StatusListScreen(navController, vm)
         }
         composable(DestinationScreen.SingleStatus.route) {
             SingleStatusScreen(statusId = "123")
