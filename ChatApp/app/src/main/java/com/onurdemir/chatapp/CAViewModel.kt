@@ -14,13 +14,16 @@ import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
 import com.onurdemir.chatapp.data.COLLECTION_CHAT
+import com.onurdemir.chatapp.data.COLLECTION_MESSAGES
 import com.onurdemir.chatapp.data.COLLECTION_USER
 import com.onurdemir.chatapp.data.ChatData
 import com.onurdemir.chatapp.data.ChatUser
 import com.onurdemir.chatapp.data.Event
+import com.onurdemir.chatapp.data.Message
 import com.onurdemir.chatapp.data.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.lang.Exception
+import java.util.Calendar
 import java.util.UUID
 import javax.inject.Inject
 
@@ -37,6 +40,9 @@ class CAViewModel @Inject constructor(
 
     val chats = mutableStateOf<List<ChatData>>(listOf())
     val inProgressChats = mutableStateOf(false)
+
+    val chatMessages = mutableStateOf<List<Message>>(listOf())
+    val inProgressChatMessages = mutableStateOf(false)
 
     init {
         //onLogout()
@@ -266,5 +272,17 @@ class CAViewModel @Inject constructor(
                     chats.value = value.documents.mapNotNull { it.toObject<ChatData>() }
                 inProgressChats.value = false
             }
+    }
+
+    fun onSendReply(chatId: String, message: String) {
+        val time = Calendar.getInstance().time.toString()
+        val msg = Message(userData.value?.userId, message, time)
+
+        db.collection(COLLECTION_CHAT)
+            .document(chatId)
+            .collection(COLLECTION_MESSAGES)
+            .document()
+            .set(msg)
+
     }
 }
