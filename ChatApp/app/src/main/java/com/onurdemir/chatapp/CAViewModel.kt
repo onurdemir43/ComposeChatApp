@@ -10,6 +10,7 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
@@ -43,6 +44,8 @@ class CAViewModel @Inject constructor(
 
     val chatMessages = mutableStateOf<List<Message>>(listOf())
     val inProgressChatMessages = mutableStateOf(false)
+
+    var currentChatMessagesListener: ListenerRegistration? = null
 
     init {
         //onLogout()
@@ -284,5 +287,25 @@ class CAViewModel @Inject constructor(
             .document()
             .set(msg)
 
+    }
+
+    fun populateChat(chatId: String) {
+        inProgressChatMessages.value = true
+        currentChatMessagesListener = db.collection(COLLECTION_CHAT)
+            .document(chatId)
+            .collection(COLLECTION_MESSAGES)
+            .addSnapshotListener { value, error ->
+                if (error != null)
+                    handleException(error)
+                if (value != null)
+                    chatMessages.value = value.documents.mapNotNull { it.toObject<Message>() }
+                        .sortedBy { it.timestamp }
+                inProgressChatMessages.value = false
+            }
+    }
+
+    fun depopulateChat() {
+        chatMessages.value = listOf()
+        currentChatMessagesListener = null
     }
 }
