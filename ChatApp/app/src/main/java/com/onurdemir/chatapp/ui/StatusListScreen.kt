@@ -80,7 +80,7 @@ fun StatusListScreen(navController: NavController, vm: CAViewModel) {
                             ) {
                                 navigateTo(
                                     navController,
-                                    DestinationScreen.SingleStatus.createRoute("")
+                                    DestinationScreen.SingleStatus.createRoute(myStatuses[0].user.userId)
                                 )
                             }
                             CommonDivider()
@@ -89,7 +89,7 @@ fun StatusListScreen(navController: NavController, vm: CAViewModel) {
                     LazyColumn(modifier = Modifier.weight(1f)) {
                         items(uniqueUsers) { user->
                             CommonRow(imageUrl = user.imageUrl, name = user.name) {
-                                navigateTo(navController, DestinationScreen.SingleStatus.createRoute(""))
+                                navigateTo(navController, DestinationScreen.SingleStatus.createRoute(user.userId))
                             }
 
                         }
