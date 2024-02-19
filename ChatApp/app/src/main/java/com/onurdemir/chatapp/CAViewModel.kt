@@ -336,7 +336,7 @@ class CAViewModel @Inject constructor(
     }
 
     private fun populateStatuses() {
-        inProgress.value = true
+        inProgressStatus.value = true
         val milliTimeDelta = 24L * 60 * 60 * 1000
         val cutoff = System.currentTimeMillis() - milliTimeDelta
 

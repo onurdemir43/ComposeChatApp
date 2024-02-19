@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Edit
@@ -23,7 +25,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.onurdemir.chatapp.CAViewModel
+import com.onurdemir.chatapp.CommonDivider
 import com.onurdemir.chatapp.CommonProgressSpinner
+import com.onurdemir.chatapp.CommonRow
+import com.onurdemir.chatapp.DestinationScreen
+import com.onurdemir.chatapp.TitleText
+import com.onurdemir.chatapp.navigateTo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,6 +41,9 @@ fun StatusListScreen(navController: NavController, vm: CAViewModel) {
     else {
         val statuses = vm.status.value
         val userData = vm.userData.value
+
+        val myStatuses = statuses.filter { it.user.userId == userData?.userId }
+        val otherStatuses = statuses.filter { it.user.userId != userData?.userId }
 
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
@@ -53,6 +63,7 @@ fun StatusListScreen(navController: NavController, vm: CAViewModel) {
             Column(modifier = Modifier
                 .fillMaxSize()
                 .padding(it)) {
+                TitleText(txt = "Status")
                 if (statuses.isEmpty())
                     Column(modifier = Modifier
                         .fillMaxWidth()
@@ -62,16 +73,34 @@ fun StatusListScreen(navController: NavController, vm: CAViewModel) {
                         Text(text = "No statuses available")
                     }
                 else {
-                    Column(modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)) {
-                        //Display statuses
+                        if (myStatuses.isNotEmpty()) {
+                            CommonRow(
+                                imageUrl = myStatuses[0].user.imageUrl,
+                                name = myStatuses[0].user.name
+                            ) {
+                                navigateTo(
+                                    navController,
+                                    DestinationScreen.SingleStatus.createRoute("")
+                                )
+                            }
+                            CommonDivider()
+                        }
+                        val uniqueUsers = otherStatuses.map { it.user }.toSet().toList()
+                    LazyColumn(modifier = Modifier.weight(1f)) {
+                        items(uniqueUsers) { user->
+                            CommonRow(imageUrl = user.imageUrl, name = user.name) {
+                                navigateTo(navController, DestinationScreen.SingleStatus.createRoute(""))
+                            }
+
+                        }
                     }
+
+                }
                     BottomNavigationMenu(
                         selectedItem = BottomNavigationItem.STATUSLIST,
                         navController = navController
                     )
-                }
+
             }
         })  
             

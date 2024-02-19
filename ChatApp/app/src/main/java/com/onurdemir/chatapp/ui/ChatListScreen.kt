@@ -34,6 +34,7 @@ import com.onurdemir.chatapp.CAViewModel
 import com.onurdemir.chatapp.CommonProgressSpinner
 import com.onurdemir.chatapp.CommonRow
 import com.onurdemir.chatapp.DestinationScreen
+import com.onurdemir.chatapp.TitleText
 import com.onurdemir.chatapp.navigateTo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,7 +65,7 @@ fun ChatListScreen(navController: NavController, vm: CAViewModel) {
             Column(modifier = Modifier
                 .fillMaxSize()
                 .padding(it)) {
-
+                TitleText(txt = "Chats")
                 if (chats.isEmpty())
                     Column(
                         modifier = Modifier
